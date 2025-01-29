@@ -46,15 +46,18 @@ public class screenTimeList {
             if (processed.containsKey(entry.getKey())){
                 continue;
             }
+            HBox box = new HBox();
+            Label appName = new Label("Sample app");
+            ComboBox<String> choices = new ComboBox<>();
+            Button addApp = new Button("Add");
             choices.getItems().addAll(appCategory);
             appName.setText(entry.getKey());
-            box.getChildren().addAll(appName, choices, addApp);
             box.setSpacing(20);
             box.setAlignment(Pos.CENTER);
             box.setMaxHeight(35);
             box.setMinHeight(35);
-            box.setMinWidth(300);
-            box.setMaxWidth(300);
+            box.setMinWidth(400);
+            box.setMaxWidth(400);
             box.setPadding(new Insets(10));
             box.setStyle("-fx-background-color: #d1c9c5; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-thickness:2");
             addApp.getStyleClass().add("button-hover-effect3");
@@ -105,10 +108,11 @@ public class screenTimeList {
 
 
             // Add all components to the row
-            box.getChildren().addAll(appName, timeLabel, box, addApp);
+            box.getChildren().addAll(appName, timeLabel, choices, addApp);
 
             // Add the row to the content box
-            vbox.getChildren().addAll(box);
+            vbox.getChildren().add(box);
+
             vbox.setSpacing(10);
             vbox.setPadding(new Insets(15));
             vbox.setAlignment(Pos.TOP_CENTER);

@@ -15,7 +15,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MainUI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 760, 538);
@@ -24,6 +23,8 @@ public class Main extends Application {
         ToDoList list = new ToDoList();
         MainController mControl = fxmlLoader.getController();
 
+        screenTimeList timeList = new screenTimeList();
+        mControl.setList(list, timeList);
 
         list.taskList = SaveController.loadTasksFromCSV("tasks.csv");
 
@@ -40,8 +41,7 @@ public class Main extends Application {
         stage.show();
         checkDeadlines(list);
 
-        screenTimeList timeList = new screenTimeList();
-        mControl.setList(list, timeList);
+
 
         Thread screenTimeThread = new Thread(ScreentimeTracker::track);
         screenTimeThread.setDaemon(true); // Ensures it stops when the app exits

@@ -1,5 +1,7 @@
 package org.todo.todolist;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -177,12 +179,6 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        if (initialized)
-            return; // Skip initialization if already done
-        initialized = true;
-
-        timeList.initialize(vboxST);
-
         tabImageView.setImage(new Image(getClass().getResource("/images/Task-Backsplash.png").toExternalForm()));
 
         mainTabPane.getSelectionModel().select(0);
@@ -218,12 +214,30 @@ public class MainController implements Initializable {
         for (Tab tab : mainTabPane.getTabs()) {
             tab.getStyleClass().remove("tab-highlighted");
         }
-        for(int i = 0; i<5; i++){
-            appListBuilder builder = new appListBuilder("Sample.exe", vboxST);
-        }
     }
 
     public void taskInitializer(ArrayList<Tasks> task) {
+        Task<Void> backgroundTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // The background operation: clearing vboxST and initializing the timeList
+                // This will be executed in a background thread
+
+                // Use Platform.runLater() to safely update the UI
+                Platform.runLater(() -> {
+                    vboxST.getChildren().clear();  // Clear the VBox
+                    timeList.initialize(vboxST);   // Initialize with new data
+                });
+
+                return null;
+            }
+        };
+
+        // Start the background task in a new thread
+        Thread backgroundThread = new Thread(backgroundTask);
+        backgroundThread.setDaemon(true);  // Daemon thread will automatically stop when the application closes
+        backgroundThread.start();
+
         for(Tasks t : task){
             TaskBuilder build = new TaskBuilder(t, list, vboxTK, gif);
             build.addBox(vboxTK);
