@@ -4,6 +4,7 @@ package org.todo.todolist;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Map;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.platform.win32.WinDef.*;
+import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.ptr.IntByReference;
 
 public class ScreentimeTracker {
@@ -97,6 +98,9 @@ public class ScreentimeTracker {
 
     private static void updateScreenTime() {
         try {
+            // Check if it's midnight and reset the screentime
+            resetScreentimeAtMidnight();
+
             HWND foregroundWindow = User32.INSTANCE.GetForegroundWindow();
             if (foregroundWindow == null) {
                 return;
@@ -136,6 +140,16 @@ public class ScreentimeTracker {
             e.printStackTrace();
         }
     }
+
+    // Method to reset screen time at midnight
+    private static void resetScreentimeAtMidnight() {
+        LocalTime now = LocalTime.now();
+        if (now.getHour() == 0 && now.getMinute() == 0 && now.getSecond() == 0) {
+            appScreenTime.clear(); // Clear the screen time data at midnight
+            System.out.println("Screen time data reset at midnight.");
+        }
+    }
+
 
     private static void saveToCSV() {
         try (FileWriter writer = new FileWriter(fileName)) {
