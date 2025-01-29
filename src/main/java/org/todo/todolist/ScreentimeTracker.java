@@ -150,6 +150,10 @@ public class ScreentimeTracker {
         }
     }
 
+    public static String getFileName(){
+        return fileName;
+    } 
+
 
     private static void saveToCSV() {
         try (FileWriter writer = new FileWriter(fileName)) {

@@ -12,7 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 
 import java.beans.EventHandler;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +24,8 @@ import java.util.HashMap;
 
 public class screenTimeList {
 
-    private CSVReader csvReader = new CSVReader();
+    private String inputPath = ScreentimeTracker.getFileName();
+    private static String filePath = "processed_data.csv";
 
     List<String> productive = new ArrayList<>();
     List<String> leisure = new ArrayList<>();
@@ -37,7 +40,7 @@ public class screenTimeList {
     Button addApp = new Button("Add");
 
     public void initialize(VBox vbox) {
-        Map<String, Long> appScreenTime = csvReader.readCSV();
+        Map<String, Long> appScreenTime = AppTime.readCSV(inputPath);
         System.out.println(appScreenTime);
         for (Map.Entry<String, Long> entry : appScreenTime.entrySet()) {
             if (processed.containsKey(entry.getKey())){
@@ -112,11 +115,31 @@ public class screenTimeList {
         }
 
     }
+    public static Map<String, String> readCSV() {
+        Map<String, String> appTypeMap = new HashMap<>();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            // Skip the header if there is one
+            br.readLine();
+            
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(",");
+                if (columns.length >= 2) {
+                    String appName = columns[0].trim();
+                    String appType = columns[1].trim();
+                    appTypeMap.put(appName, appType);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return appTypeMap;
+    }
 
     public void saveProcessedToCSV() {
         // Define the path where the CSV will be saved
-        String filePath = "processed_data.csv";
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             // Write the header
             writer.write("App Name, Category");
