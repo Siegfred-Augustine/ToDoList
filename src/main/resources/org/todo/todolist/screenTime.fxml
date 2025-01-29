@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="535.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.todo.todolist.MainController">
+    <children>
+        <BorderPane prefHeight="535.0" prefWidth="760.0">
+            <left>
+                <Pane prefHeight="402.0" prefWidth="210.0" style="-fx-background-color: #1b3942;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Pane layoutX="-1.0" layoutY="184.0" prefHeight="353.0" prefWidth="213.0" style="-fx-background-color: #418E8E;">
+                            <children>
+                                <Pane layoutX="-8.0" layoutY="55.0" prefHeight="214.0" prefWidth="219.0" style="-fx-background-color: #0A625D;">
+                                    <children>
+                                        <Pane layoutX="2.0" layoutY="58.0" prefHeight="244.0" prefWidth="218.0" style="-fx-background-color: #0f1f24;">
+                                            <children>
+                                                <Button fx:id="options" layoutX="7.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="214.0" styleClass="button-hover-effect4" stylesheets="@style.css" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="Yu Gothic UI Semibold" size="14.0" />
+                                                    </font>
+                                                    <effect>
+                                                        <InnerShadow />
+                                                    </effect>
+                                                    <graphic>
+                                                        <HBox alignment="CENTER" prefHeight="58.0" prefWidth="212.0" spacing="6.0" styleClass="button-hover-effect4" stylesheets="@style.css">
+                                                            <children>
+                                                                <Label alignment="CENTER_RIGHT" prefHeight="47.0" prefWidth="71.0" text="Options" textFill="#082936">
+                                                                    <font>
+                                                                        <Font name="Yu Gothic UI Semibold" size="14.0" />
+                                                                    </font>
+                                                                </Label>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../../../images/Settings.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </children>
+                                                        </HBox>
+                                                    </graphic>
+                                                </Button>
+                                                <ImageView fx:id="gif" fitHeight="142.0" fitWidth="136.0" layoutX="43.0" layoutY="88.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../../../../Icons%20and%20Backsplash/Idle%20Animation2.gif" />
+                                                    </image>
+                                                </ImageView>
+                                            </children>
+                                        </Pane>
+
+                                        <Button fx:id="sortBy" layoutX="9.0" layoutY="6.0" mnemonicParsing="false" onAction="#toggle" prefHeight="53.0" prefWidth="213.0" styleClass="button-hover-effect5" stylesheets="@style.css" text="Sort By Priority" textFill="WHITE">
+
+                                            <font>
+                                                <Font name="Yu Gothic UI Semibold" size="14.0" />
+                                            </font>
+                                            <effect>
+                                                <InnerShadow />
+                                            </effect>
+                                        </Button>
+                                    </children>
+                                </Pane>
+                                <Button fx:id="addTask" layoutX="-2.0" layoutY="-2.0" mnemonicParsing="false" onAction="#addTaskPane" prefHeight="58.0" prefWidth="215.0" styleClass="button-hover-effect3" stylesheets="@style.css" textFill="WHITE">
+                                    <font>
+                                        <Font name="Yu Gothic UI Semibold" size="14.0" />
+                                    </font>
+                                    <effect>
+                                        <InnerShadow />
+                                    </effect>
+                                    <graphic>
+                                        <HBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="58.0" prefWidth="197.0" spacing="6.0" styleClass="button-hover-effect3" stylesheets="@style.css">
+                                            <children>
+                                                <Label alignment="CENTER_RIGHT" prefHeight="47.0" prefWidth="119.0" text="Add Task Entry" textFill="#082936">
+                                                    <font>
+                                                        <Font name="Yu Gothic UI Semibold" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <ImageView fitHeight="22.0" fitWidth="21.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../images/Task.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </children>
+                                        </HBox>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <effect>
+                                <InnerShadow />
+                            </effect>
+                        </Pane>
+                        <ImageView fitHeight="71.0" fitWidth="205.0" layoutX="5.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../../images/LOGO.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                    <effect>
+                        <DropShadow height="11.64" offsetX="10.0" radius="18.1875" spread="0.7" width="63.11" />
+                    </effect>
+                </Pane>
+            </left>
+         <center>
+            <Pane prefHeight="535.0" prefWidth="524.0" styleClass="backgroundColor3" stylesheets="@style.css" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox layoutX="-1.0" prefHeight="535.0" prefWidth="552.0" />
+               </children>
+            </Pane>
+         </center>
+        </BorderPane>
+    </children>
+</AnchorPane>

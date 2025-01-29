@@ -39,7 +39,7 @@ public class ScreentimeTracker {
     private static long lastUpdateTime = System.currentTimeMillis();
     private static String fileName = generateFileName();
     
-    public static void main(String[] args) {
+    public static void track() {
         if (!Platform.isWindows()) {
             System.err.println("This program only works on Windows.");
             return;

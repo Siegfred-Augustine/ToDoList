@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 //import static org.todo.todolist.Main.list;
@@ -170,6 +171,9 @@ public class MainController implements Initializable {
 
         for (Tab tab : mainTabPane.getTabs()) {
             tab.getStyleClass().remove("tab-highlighted");
+        }
+        for(int i = 0; i<5; i++){
+            appListBuilder builder = new appListBuilder("Sample.exe", vboxST);
         }
     }
 

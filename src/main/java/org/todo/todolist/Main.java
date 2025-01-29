@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.swing.*;
@@ -30,7 +31,6 @@ public class Main extends Application {
 
         list.eventsList = SaveController.loadEventsFromCSV("events.csv");
 
-
         mControl.taskInitializer(list.taskList);
         mControl.eventInitializer(list.eventsList);
         mControl.activityInitializer(list.activityTasklist);
@@ -39,11 +39,17 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.show();
         checkDeadlines(list);
+
+        Thread screenTimeThread = new Thread(ScreentimeTracker::track);
+        screenTimeThread.setDaemon(true); // Ensures it stops when the app exits
+        screenTimeThread.start();
+
     }
 
     public static void main(String[] args) {
         launch();
     }
+
     void checkDeadlines(ToDoList list){
         Thread deadlineThread = new Thread(() -> {
             while (true) {
