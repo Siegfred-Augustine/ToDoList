@@ -53,7 +53,7 @@
                         <Font name="Yu Gothic UI Semibold" size="28.0" />
                      </font>
                   </Label>
-                  <Button layoutX="280.0" layoutY="452.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="201.0" style="-fx-background-color: #0f1f24;" text="Save Changes" textFill="WHITE">
+                  <Button fx:id="saveChanges" layoutX="280.0" layoutY="452.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="201.0" style="-fx-background-color: #0f1f24;" text="Save Changes" textFill="WHITE">
                      <font>
                         <Font size="20.0" />
                      </font>

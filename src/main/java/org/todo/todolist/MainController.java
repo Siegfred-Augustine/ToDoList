@@ -221,7 +221,7 @@ public class MainController implements Initializable {
             while (true) {
                 try {
                     // Sleep for some time before checking again (e.g., every minute)
-                    Thread.sleep(1000); // 1 second delay (adjust as needed)
+                    Thread.sleep(10000); // 1 second delay (adjust as needed)
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

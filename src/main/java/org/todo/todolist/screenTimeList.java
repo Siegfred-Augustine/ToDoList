@@ -104,6 +104,7 @@ public class screenTimeList {
                         System.out.println(entry.getKey() + " is categorized as Default (Ignored).");
                         break;
                 }
+                addApp.setDisable(true);
             });
 
 

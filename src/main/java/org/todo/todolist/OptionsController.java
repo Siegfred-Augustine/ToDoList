@@ -21,6 +21,9 @@ public class OptionsController {
     @FXML
     private TextField purposedMin;
 
+    @FXML
+    private Button saveChanges;
+
     MainController mcontroller;
 
     public void setMainControl(MainController control){
