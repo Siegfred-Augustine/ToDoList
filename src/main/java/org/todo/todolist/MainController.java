@@ -217,27 +217,24 @@ public class MainController implements Initializable {
     }
 
     public void taskInitializer(ArrayList<Tasks> task) {
-        Task<Void> backgroundTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                // The background operation: clearing vboxST and initializing the timeList
-                // This will be executed in a background thread
+        Thread deadlineThread = new Thread(() -> {
+            while (true) {
+                try {
+                    // Sleep for some time before checking again (e.g., every minute)
+                    Thread.sleep(1000); // 1 second delay (adjust as needed)
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-                // Use Platform.runLater() to safely update the UI
+                // Ensure updates to UI components happen on the JavaFX Application Thread
                 Platform.runLater(() -> {
-                    vboxST.getChildren().clear();  // Clear the VBox
-                    timeList.initialize(vboxST);   // Initialize with new data
+                    vboxST.getChildren().clear();
+                    timeList.initialize(vboxST);  // Safely updating UI components from the background thread
                 });
-
-                return null;
             }
-        };
-
-        // Start the background task in a new thread
-        Thread backgroundThread = new Thread(backgroundTask);
-        backgroundThread.setDaemon(true);  // Daemon thread will automatically stop when the application closes
-        backgroundThread.start();
-
+        });
+        deadlineThread.setDaemon(true);  // This ensures the thread terminates when the app exits
+        deadlineThread.start();
         for(Tasks t : task){
             TaskBuilder build = new TaskBuilder(t, list, vboxTK, gif);
             build.addBox(vboxTK);
