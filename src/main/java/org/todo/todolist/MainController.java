@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import javax.swing.*;
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -69,6 +70,28 @@ public class MainController implements Initializable {
     @FXML
     private ImageView gif;
 
+    @FXML
+    private TextField defaultTX;
+
+    @FXML
+    private TextField leisureTX;
+
+    @FXML
+    private Button options2;
+
+    @FXML
+    private TextField productiveTX;
+
+    @FXML
+    private TextField purposedMin;
+
+    @FXML
+    private TextField purposedMax;
+
+
+    boolean initialized = false;
+
+    screenTimeList timeList;
     ToDoList list;
 
     private boolean sortImportanceToggle = false;
@@ -78,8 +101,9 @@ public class MainController implements Initializable {
         sortImportance();
         System.out.println("task sorted");
     }
-    public void setList(ToDoList list){
+    public void setList(ToDoList list, screenTimeList timeList){
         this.list = list;
+        this.timeList = timeList;
     }
 
     @FXML
@@ -93,6 +117,21 @@ public class MainController implements Initializable {
         }
         sortImportanceToggle = !sortImportanceToggle; // Toggle the flag
     }
+    @FXML
+    public void optionsScene(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml")); // Use Main.class
+        Scene scene = new Scene(fxmlLoader.load(), 760, 538);
+
+        // Get and setup the controller
+        OptionsController controller= fxmlLoader.getController();
+        controller.setMainControl(this);
+
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
     public void addTaskPane(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("addTaskEntry.fxml"));
@@ -108,6 +147,7 @@ public class MainController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
+
     public void listUpdater(Tasks task, ToDoList list) {
         list.addTask(task);
         if(sortImportanceToggle)
@@ -134,9 +174,15 @@ public class MainController implements Initializable {
             sortByDeadline();
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
     }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        if (initialized)
+            return; // Skip initialization if already done
+        initialized = true;
+
+        timeList.initialize(vboxST);
+
         tabImageView.setImage(new Image(getClass().getResource("/images/Task-Backsplash.png").toExternalForm()));
 
         mainTabPane.getSelectionModel().select(0);

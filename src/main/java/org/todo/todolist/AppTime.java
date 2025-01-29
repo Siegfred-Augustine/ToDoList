@@ -7,6 +7,7 @@ import java.util.Map;
 import java.io.*;
 
 public class AppTime {
+
     public static Map<String, Long> readCSV(String fileName) {
         Map<String, Long> appScreenTime = new HashMap<>();
 

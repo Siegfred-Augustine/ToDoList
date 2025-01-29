@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class appListBuilder {
-    String[] appCategory = new String[]{"Default (Ignored)", "Leisure"};
+    String[] appCategory = new String[]{"Default (Ignored)", "Leisure", "Productive", "Dynamic", "Purposed"};
     HBox box = new HBox();
     Label appName = new Label("Sample app");
     ComboBox<String> choices = new ComboBox<>();

@@ -23,7 +23,7 @@ public class Main extends Application {
 
         ToDoList list = new ToDoList();
         MainController mControl = fxmlLoader.getController();
-        mControl.setList(list);
+
 
         list.taskList = SaveController.loadTasksFromCSV("tasks.csv");
 
@@ -40,6 +40,9 @@ public class Main extends Application {
         stage.show();
         checkDeadlines(list);
 
+        screenTimeList timeList = new screenTimeList();
+        mControl.setList(list, timeList);
+
         Thread screenTimeThread = new Thread(ScreentimeTracker::track);
         screenTimeThread.setDaemon(true); // Ensures it stops when the app exits
         screenTimeThread.start();
@@ -55,7 +58,7 @@ public class Main extends Application {
             while (true) {
                 try {
                     // Sleep for some time before checking again (e.g., every minute)
-                    Thread.sleep(60000); // 60 seconds
+                    Thread.sleep(300000); // 60 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

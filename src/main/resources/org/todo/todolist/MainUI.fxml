@@ -28,7 +28,7 @@
                            <children>
                               <Pane layoutX="2.0" layoutY="58.0" prefHeight="244.0" prefWidth="218.0" style="-fx-background-color: #0f1f24;">
                                  <children>
-                                    <Button fx:id="options" layoutX="7.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="214.0" styleClass="button-hover-effect4" stylesheets="@style.css" textFill="WHITE">
+                                    <Button fx:id="options" layoutX="7.0" mnemonicParsing="false" onAction="#optionsScene" prefHeight="58.0" prefWidth="214.0" styleClass="button-hover-effect4" stylesheets="@style.css" textFill="WHITE">
                                        <font>
                                           <Font name="Yu Gothic UI Semibold" size="14.0" />
                                        </font>
