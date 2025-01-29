@@ -151,6 +151,7 @@ public class ScreentimeTracker {
     }
 
     public static String getFileName(){
+        checkAndUpdateFileName();
         return fileName;
     } 
 
