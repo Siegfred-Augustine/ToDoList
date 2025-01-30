@@ -4,6 +4,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 public class SaveController {
 
@@ -217,6 +218,36 @@ public class SaveController {
         }
         return tasks;
     }
+
+    public static void saveTimeSettings(HashMap<String, String> timeSettings, String filename) {
+        clearCSV(filename);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String key : timeSettings.keySet()) {
+                String line = key + "," + timeSettings.get(key);
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static HashMap<String, String> loadTimeSettings(String filename) {
+        HashMap<String, String> timeSettings = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] settingData = line.split(",");
+                if (settingData.length == 2) {
+                    timeSettings.put(settingData[0], settingData[1]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return timeSettings;
+    }
+
     public static void clearCSV(String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             // Opening the file in write mode with an empty content will clear it
@@ -226,4 +257,5 @@ public class SaveController {
             e.printStackTrace();
         }
     }
+    
 }

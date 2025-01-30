@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.time.LocalTime;
 
 //import static org.todo.todolist.Main.list;
 
@@ -97,6 +98,10 @@ public class MainController implements Initializable {
     ToDoList list;
 
     private boolean sortImportanceToggle = false;
+    private LocalTime leisureDefaultTime;
+    private LocalTime productiveDefaultTime;
+    private LocalTime maxAllowedTime;
+    private LocalTime minRequiredTime;
 
     @FXML
     void sort(ActionEvent event){
@@ -121,11 +126,25 @@ public class MainController implements Initializable {
     }
     @FXML
     public void optionsScene(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml")); // Use Main.class
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 760, 538);
 
         // Get and setup the controller
-        OptionsController controller= fxmlLoader.getController();
+        OptionsController controller = fxmlLoader.getController();
+        
+        // Load time settings if they haven't been loaded yet
+        if (leisureDefaultTime == null) {
+            loadTimeSettings();
+        }
+        
+        // Pass the current time settings to the options controller
+        controller.setInitialTimes(
+            leisureDefaultTime,
+            productiveDefaultTime,
+            maxAllowedTime,
+            minRequiredTime
+        );
+        
         controller.setMainControl(this);
 
         Stage stage = new Stage();
@@ -176,6 +195,31 @@ public class MainController implements Initializable {
             sortByDeadline();
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
     }
+
+    public void updateTimeSettings(LocalTime leisure, LocalTime productive, 
+                                   LocalTime purposedMax, LocalTime purposedMin) {
+        this.leisureDefaultTime = leisure;
+        this.productiveDefaultTime = productive;
+        this.maxAllowedTime = purposedMax;
+        this.minRequiredTime = purposedMin;
+        
+        // Save time settings to a file
+        saveTimeSettings();
+    }
+
+
+    private void saveTimeSettings() {
+        // Create a HashMap to store time settings
+        HashMap<String, String> timeSettings = new HashMap<>();
+        timeSettings.put("leisureTime", leisureDefaultTime.toString());
+        timeSettings.put("productiveTime", productiveDefaultTime.toString());
+        timeSettings.put("maxTime", maxAllowedTime.toString());
+        timeSettings.put("minTime", minRequiredTime.toString());
+        
+        // Add a method to SaveController to save these settings
+        SaveController.saveTimeSettings(timeSettings, "timeSettings.csv");
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -209,6 +253,7 @@ public class MainController implements Initializable {
             if (newTab != null) {
                 newTab.getStyleClass().add("tab-highlighted");
             }
+            loadTimeSettings();
         });
 
         for (Tab tab : mainTabPane.getTabs()) {
@@ -316,5 +361,24 @@ public class MainController implements Initializable {
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
         SaveController.saveActivityToCSV(list.activityTasklist, "activities.csv");
     }
+
+    private void loadTimeSettings() {
+        // Add a method to SaveController to load these settings
+        HashMap<String, String> timeSettings = SaveController.loadTimeSettings("timeSettings.csv");
+        
+        if (timeSettings != null) {
+            leisureDefaultTime = LocalTime.parse(timeSettings.get("leisureTime"));
+            productiveDefaultTime = LocalTime.parse(timeSettings.get("productiveTime"));
+            maxAllowedTime = LocalTime.parse(timeSettings.get("maxTime"));
+            minRequiredTime = LocalTime.parse(timeSettings.get("minTime"));
+        } else {
+            // Set default values if no settings are saved
+            leisureDefaultTime = LocalTime.of(1, 0); // 1 hour
+            productiveDefaultTime = LocalTime.of(2, 0); // 2 hours
+            maxAllowedTime = LocalTime.of(4, 0); // 4 hours
+            minRequiredTime = LocalTime.of(0, 30); // 30 minutes
+        }
+    }
 }
+
 
