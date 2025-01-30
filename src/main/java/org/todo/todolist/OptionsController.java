@@ -2,21 +2,40 @@ package org.todo.todolist;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class OptionsController {
     @FXML
-    private TextField leisureTX;
+    private Spinner<Integer> leisureHours;
     @FXML
-    private TextField productiveTX;
+    private Spinner<Integer> leisureMinutes;
     @FXML
-    private TextField purposedMax;
+    private Spinner<Integer> leisureSeconds;
+    
     @FXML
-    private TextField purposedMin;
+    private Spinner<Integer> productiveHours;
+    @FXML
+    private Spinner<Integer> productiveMinutes;
+    @FXML
+    private Spinner<Integer> productiveSeconds;
+    
+    @FXML
+    private Spinner<Integer> purposedMaxHours;
+    @FXML
+    private Spinner<Integer> purposedMaxMinutes;
+    @FXML
+    private Spinner<Integer> purposedMaxSeconds;
+    
+    @FXML
+    private Spinner<Integer> purposedMinHours;
+    @FXML
+    private Spinner<Integer> purposedMinMinutes;
+    @FXML
+    private Spinner<Integer> purposedMinSeconds;
+    
     @FXML
     private Button saveChanges;
     
@@ -29,93 +48,114 @@ public class OptionsController {
     private LocalTime purposedMaxTime;
     private LocalTime purposedMinTime;
 
-    public void setMainControl(MainController control){
+    public void setMainControl(MainController control) {
         mcontroller = control;
     }
     
     @FXML
     public void initialize() {
-        // Add listeners to all time input fields
-        setupTimeField(leisureTX);
-        setupTimeField(productiveTX);
-        setupTimeField(purposedMax);
-        setupTimeField(purposedMin);
+        // Initialize all spinners
+        setupTimeSpinners();
         
         // Setup save button handler
         saveChanges.setOnAction(event -> saveTimeSettings());
     }
     
-    private void setupTimeField(TextField field) {
-        // Add input formatter while typing
-        field.addEventHandler(KeyEvent.KEY_TYPED, event -> {
-            String text = field.getText();
-            if (!text.matches("^[0-9:]*$")) {
-                event.consume();
-            }
-            
-            // Auto-add colons after hours and minutes
-            if (text.length() == 2 || text.length() == 5) {
-                field.setText(text + ":");
-                field.positionCaret(text.length() + 1);
-            }
-        });
+    private void setupTimeSpinners() {
+        // Setup hours spinners (0-23)
+        setupHourSpinner(leisureHours);
+        setupHourSpinner(productiveHours);
+        setupHourSpinner(purposedMaxHours);
+        setupHourSpinner(purposedMinHours);
         
-        // Validate on focus loss
-        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) { // On focus lost
-                validateAndFormatTimeField(field);
+        // Setup minutes and seconds spinners (0-59)
+        setupMinuteSecondSpinner(leisureMinutes);
+        setupMinuteSecondSpinner(leisureSeconds);
+        setupMinuteSecondSpinner(productiveMinutes);
+        setupMinuteSecondSpinner(productiveSeconds);
+        setupMinuteSecondSpinner(purposedMaxMinutes);
+        setupMinuteSecondSpinner(purposedMaxSeconds);
+        setupMinuteSecondSpinner(purposedMinMinutes);
+        setupMinuteSecondSpinner(purposedMinSeconds);
+    }
+    
+    private void setupHourSpinner(Spinner<Integer> spinner) {
+        SpinnerValueFactory<Integer> valueFactory = 
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0);
+        spinner.setValueFactory(valueFactory);
+        spinner.setEditable(true);
+        
+        // Add listener to wrap around values
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) {
+                spinner.getValueFactory().setValue(0);
+            } else if (newValue > 23) {
+                spinner.getValueFactory().setValue(0);
+            } else if (newValue < 0) {
+                spinner.getValueFactory().setValue(23);
             }
         });
     }
     
-    private void validateAndFormatTimeField(TextField field) {
-        try {
-            String text = field.getText();
-            LocalTime time = LocalTime.parse(text, TIME_FORMATTER);
-            field.setText(time.format(TIME_FORMATTER));
-            field.setStyle("-fx-text-fill: black;"); // Reset to normal if valid
-        } catch (DateTimeParseException e) {
-            field.setStyle("-fx-text-fill: red;"); // Show error state
-        }
+    private void setupMinuteSecondSpinner(Spinner<Integer> spinner) {
+        SpinnerValueFactory<Integer> valueFactory = 
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
+        spinner.setValueFactory(valueFactory);
+        spinner.setEditable(true);
+        
+        // Add listener to wrap around values
+        spinner.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue == null) {
+                spinner.getValueFactory().setValue(0);
+            } else if (newValue > 59) {
+                spinner.getValueFactory().setValue(0);
+            } else if (newValue < 0) {
+                spinner.getValueFactory().setValue(59);
+            }
+        });
+    }
+    
+    private LocalTime getTimeFromSpinners(Spinner<Integer> hours, 
+                                        Spinner<Integer> minutes, 
+                                        Spinner<Integer> seconds) {
+        return LocalTime.of(
+            hours.getValue(),
+            minutes.getValue(),
+            seconds.getValue()
+        );
     }
     
     private void saveTimeSettings() {
         try {
-            // Parse and store all time values
-            leisureTime = LocalTime.parse(leisureTX.getText(), TIME_FORMATTER);
-            productiveTime = LocalTime.parse(productiveTX.getText(), TIME_FORMATTER);
-            purposedMaxTime = LocalTime.parse(purposedMax.getText(), TIME_FORMATTER);
-            purposedMinTime = LocalTime.parse(purposedMin.getText(), TIME_FORMATTER);
+            // Get time values from spinners
+            leisureTime = getTimeFromSpinners(leisureHours, leisureMinutes, leisureSeconds);
+            productiveTime = getTimeFromSpinners(productiveHours, productiveMinutes, productiveSeconds);
+            purposedMaxTime = getTimeFromSpinners(purposedMaxHours, purposedMaxMinutes, purposedMaxSeconds);
+            purposedMinTime = getTimeFromSpinners(purposedMinHours, purposedMinMinutes, purposedMinSeconds);
             
-            // Validate time relationships if needed
+            // Validate time relationships
             if (purposedMinTime.isAfter(purposedMaxTime)) {
                 throw new IllegalArgumentException("Minimum time cannot be greater than maximum time");
             }
             
-            // You can store these values in your main controller or a settings manager
             notifyMainController();
             
-        } catch (DateTimeParseException e) {
-            showError("Invalid time format. Please use HH:mm:ss");
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
         }
     }
     
     private void showError(String message) {
-        // You can implement this using JavaFX Alert or your preferred error display method
         System.err.println(message); // Replace with proper error display
     }
     
     private void notifyMainController() {
         if (mcontroller != null) {
-            // Add methods to MainController to handle these time settings
-            // For example:
             mcontroller.updateTimeSettings(leisureTime, productiveTime, purposedMaxTime, purposedMinTime);
         }
     }
     
-    // Getter methods for stored times
+    // Getter methods
     public LocalTime getLeisureTime() {
         return leisureTime;
     }
