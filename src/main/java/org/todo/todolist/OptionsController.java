@@ -1,5 +1,6 @@
 package org.todo.todolist;
 
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
@@ -98,6 +99,7 @@ public class OptionsController {
     }
     
     private void setupMinuteSecondSpinner(Spinner<Integer> spinner) {
+        // Create value factory for minutes/seconds (0-59)
         SpinnerValueFactory<Integer> valueFactory = 
             new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0);
         spinner.setValueFactory(valueFactory);
@@ -113,6 +115,27 @@ public class OptionsController {
                 spinner.getValueFactory().setValue(59);
             }
         });
+    }
+
+    public void setInitialTimes(LocalTime leisure, LocalTime productive, 
+                               LocalTime maxTime, LocalTime minTime) {
+        // Set hours spinners
+        leisureHours.getValueFactory().setValue(leisure.getHour());
+        productiveHours.getValueFactory().setValue(productive.getHour());
+        purposedMaxHours.getValueFactory().setValue(maxTime.getHour());
+        purposedMinHours.getValueFactory().setValue(minTime.getHour());
+        
+        // Set minutes spinners
+        leisureMinutes.getValueFactory().setValue(leisure.getMinute());
+        productiveMinutes.getValueFactory().setValue(productive.getMinute());
+        purposedMaxMinutes.getValueFactory().setValue(maxTime.getMinute());
+        purposedMinMinutes.getValueFactory().setValue(minTime.getMinute());
+        
+        // Set seconds spinners
+        leisureSeconds.getValueFactory().setValue(leisure.getSecond());
+        productiveSeconds.getValueFactory().setValue(productive.getSecond());
+        purposedMaxSeconds.getValueFactory().setValue(maxTime.getSecond());
+        purposedMinSeconds.getValueFactory().setValue(minTime.getSecond());
     }
     
     private LocalTime getTimeFromSpinners(Spinner<Integer> hours, 

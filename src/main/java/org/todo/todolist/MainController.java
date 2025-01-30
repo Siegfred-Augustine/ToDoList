@@ -126,11 +126,25 @@ public class MainController implements Initializable {
     }
     @FXML
     public void optionsScene(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml")); // Use Main.class
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 760, 538);
 
         // Get and setup the controller
-        OptionsController controller= fxmlLoader.getController();
+        OptionsController controller = fxmlLoader.getController();
+        
+        // Load time settings if they haven't been loaded yet
+        if (leisureDefaultTime == null) {
+            loadTimeSettings();
+        }
+        
+        // Pass the current time settings to the options controller
+        controller.setInitialTimes(
+            leisureDefaultTime,
+            productiveDefaultTime,
+            maxAllowedTime,
+            minRequiredTime
+        );
+        
         controller.setMainControl(this);
 
         Stage stage = new Stage();

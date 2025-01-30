@@ -2,9 +2,10 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
@@ -37,10 +38,73 @@
                                     </font>
                                 </Label>
                                 
-                                <TextField fx:id="leisureTX" layoutX="235.0" layoutY="38.0" prefHeight="34.0" prefWidth="224.0" promptText="Enter time (HH:mm:ss)" />
-                                <TextField fx:id="productiveTX" layoutX="235.0" layoutY="93.0" prefHeight="34.0" prefWidth="224.0" promptText="Enter time (HH:mm:ss)" />
-                                <TextField fx:id="purposedMax" layoutX="235.0" layoutY="146.0" prefHeight="34.0" prefWidth="224.0" promptText="Enter time (HH:mm:ss)" />
-                                <TextField fx:id="purposedMin" layoutX="235.0" layoutY="198.0" prefHeight="34.0" prefWidth="224.0" promptText="Enter time (HH:mm:ss)" />
+                                <!-- Leisure Time Spinners -->
+                                <HBox layoutX="235.0" layoutY="38.0" spacing="5">
+                                    <Spinner fx:id="leisureHours" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="leisureMinutes" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="leisureSeconds" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                </HBox>
+
+                                <!-- Productive Time Spinners -->
+                                <HBox layoutX="235.0" layoutY="93.0" spacing="5">
+                                    <Spinner fx:id="productiveHours" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="productiveMinutes" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="productiveSeconds" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                </HBox>
+
+                                <!-- Purposed Max Time Spinners -->
+                                <HBox layoutX="235.0" layoutY="146.0" spacing="5">
+                                    <Spinner fx:id="purposedMaxHours" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="purposedMaxMinutes" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="purposedMaxSeconds" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                </HBox>
+
+                                <!-- Purposed Min Time Spinners -->
+                                <HBox layoutX="235.0" layoutY="198.0" spacing="5">
+                                    <Spinner fx:id="purposedMinHours" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="purposedMinMinutes" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                    <Label text=":" textFill="WHITE">
+                                        <font>
+                                            <Font size="20.0" />
+                                        </font>
+                                    </Label>
+                                    <Spinner fx:id="purposedMinSeconds" prefHeight="34.0" prefWidth="70.0" styleClass="time-spinner" />
+                                </HBox>
                             </children>
                         </Pane>
                         
