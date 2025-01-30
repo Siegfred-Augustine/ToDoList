@@ -1,6 +1,8 @@
 App Name,Hours,Minutes,Seconds
-java.exe,0,7,54
+java.exe,0,12,28
 idea64.exe,0,5,45
 opera.exe,0,4,16
+firefox.exe,0,0,45
+Code.exe,0,0,45
+explorer.exe,0,0,5
 SceneBuilder.exe,0,0,4
-explorer.exe,0,0,1
