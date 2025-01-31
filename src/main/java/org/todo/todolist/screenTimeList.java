@@ -1,5 +1,6 @@
 package org.todo.todolist;
 
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,11 +19,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class screenTimeList {
+public class ScreentimeList {
 
     private String inputPath = ScreentimeTracker.getFileName();
     private static String filePath = "processed_data.csv";
@@ -105,6 +109,7 @@ public class screenTimeList {
                         break;
                 }
                 addApp.setDisable(true);
+                saveProcessedToCSV();
             });
 
 
@@ -122,12 +127,18 @@ public class screenTimeList {
     }
     public static Map<String, String> readCSV() {
         Map<String, String> appTypeMap = new HashMap<>();
-        
+
+        // Check if the file exists
+        if (!Files.exists(Paths.get(filePath))) {
+            System.out.println("File not found: " + filePath + ". Returning an empty map.");
+            return appTypeMap; // Return an empty map if the file does not exist
+        }
+
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             // Skip the header if there is one
             br.readLine();
-            
+
             while ((line = br.readLine()) != null) {
                 String[] columns = line.split(",");
                 if (columns.length >= 2) {
@@ -139,7 +150,7 @@ public class screenTimeList {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return appTypeMap;
     }
 
