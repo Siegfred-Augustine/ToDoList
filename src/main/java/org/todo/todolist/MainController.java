@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -96,10 +97,15 @@ public class MainController implements Initializable {
 
     boolean initialized = false;
 
+    private boolean sortImportanceToggle = false;
+    private LocalTime leisureDefaultTime;
+    private LocalTime productiveDefaultTime;
+    private LocalTime maxAllowedTime;
+    private LocalTime minRequiredTime;
+
     ScreenTimeList timeList;
     ToDoList list;
 
-    private boolean sortImportanceToggle = false;
 
     @FXML
     void sort(ActionEvent event){
@@ -322,5 +328,46 @@ public class MainController implements Initializable {
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
         SaveController.saveActivityToCSV(list.activityTasklist, "activities.csv");
     }
+    private void loadTimeSettings() {
+        // Add a method to SaveController to load these settings
+        HashMap<String, String> timeSettings = SaveController.loadTimeSettings("timeSettings.csv");
+
+        if (timeSettings != null) {
+            leisureDefaultTime = LocalTime.parse(timeSettings.get("leisureTime"));
+            productiveDefaultTime = LocalTime.parse(timeSettings.get("productiveTime"));
+            maxAllowedTime = LocalTime.parse(timeSettings.get("maxTime"));
+            minRequiredTime = LocalTime.parse(timeSettings.get("minTime"));
+        } else {
+            // Set default values if no settings are saved
+            leisureDefaultTime = LocalTime.of(1, 0); // 1 hour
+            productiveDefaultTime = LocalTime.of(2, 0); // 2 hours
+            maxAllowedTime = LocalTime.of(4, 0); // 4 hours
+            minRequiredTime = LocalTime.of(0, 30); // 30 minutes
+        }
+    }
+    public void updateTimeSettings(LocalTime leisure, LocalTime productive,
+                                   LocalTime purposedMax, LocalTime purposedMin) {
+        this.leisureDefaultTime = leisure;
+        this.productiveDefaultTime = productive;
+        this.maxAllowedTime = purposedMax;
+        this.minRequiredTime = purposedMin;
+
+        // Save time settings to a file
+        saveTimeSettings();
+    }
+
+
+    private void saveTimeSettings() {
+        // Create a HashMap to store time settings
+        HashMap<String, String> timeSettings = new HashMap<>();
+        timeSettings.put("leisureTime", leisureDefaultTime.toString());
+        timeSettings.put("productiveTime", productiveDefaultTime.toString());
+        timeSettings.put("maxTime", maxAllowedTime.toString());
+        timeSettings.put("minTime", minRequiredTime.toString());
+
+        // Add a method to SaveController to save these settings
+        SaveController.saveTimeSettings(timeSettings, "timeSettings.csv");
+    }
+
 }
 
