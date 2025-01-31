@@ -1,4 +1,4 @@
-maxTime,08:00
-leisureTime,07:00
-minTime,03:00
-productiveTime,09:00
+maxTime,00:00:15
+leisureTime,00:00:10
+minTime,00:00:10
+productiveTime,00:00:10

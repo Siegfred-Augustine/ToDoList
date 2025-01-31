@@ -94,7 +94,7 @@ public class MainController implements Initializable {
 
     boolean initialized = false;
 
-    screenTimeList timeList;
+    ScreentimeList timeList;
     ToDoList list;
 
     private boolean sortImportanceToggle = false;
@@ -108,7 +108,7 @@ public class MainController implements Initializable {
         sortImportance();
         System.out.println("task sorted");
     }
-    public void setList(ToDoList list, screenTimeList timeList){
+    public void setList(ToDoList list, ScreentimeList timeList){
         this.list = list;
         this.timeList = timeList;
     }
