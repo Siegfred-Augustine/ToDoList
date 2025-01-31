@@ -90,10 +90,13 @@ public class MainController implements Initializable {
     @FXML
     private TextField purposedMax;
 
+    @FXML
+    private VBox vboxPS;
+
 
     boolean initialized = false;
 
-    screenTimeList timeList;
+    ScreenTimeList timeList;
     ToDoList list;
 
     private boolean sortImportanceToggle = false;
@@ -103,7 +106,7 @@ public class MainController implements Initializable {
         sortImportance();
         System.out.println("task sorted");
     }
-    public void setList(ToDoList list, screenTimeList timeList){
+    public void setList(ToDoList list, ScreenTimeList timeList){
         this.list = list;
         this.timeList = timeList;
     }
@@ -229,7 +232,10 @@ public class MainController implements Initializable {
                 // Ensure updates to UI components happen on the JavaFX Application Thread
                 Platform.runLater(() -> {
                     vboxST.getChildren().clear();
-                    timeList.initialize(vboxST);  // Safely updating UI components from the background thread
+                    vboxPS.getChildren().clear();
+                    vboxST.getChildren().add(new Label("Unprocessed Apps"));
+                    vboxPS.getChildren().add(new Label("Processed Apps"));
+                    timeList.initialize(vboxST, vboxPS);  // Safely updating UI components from the background thread
                 });
             }
         });

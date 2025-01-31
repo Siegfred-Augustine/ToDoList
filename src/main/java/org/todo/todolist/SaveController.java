@@ -1,9 +1,12 @@
 package org.todo.todolist;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 public class SaveController {
 
@@ -225,5 +228,41 @@ public class SaveController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static HashMap<String, String> loadTimeSettings(String filename) {
+        HashMap<String, String> timeSettings = new HashMap<>();
+
+        // Check if the file exists
+        if (!Files.exists(Paths.get(filename))) {
+            System.out.println("File not found: " + filename + ". Returning an empty map.");
+            return timeSettings; // Return an empty map if the file does not exist
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] settingData = line.split(",");
+                if (settingData.length == 2) {
+                    timeSettings.put(settingData[0].trim(), settingData[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return timeSettings;
+    }
+    public static void saveTimeSettings(HashMap<String, String> timeSettings, String filename) {
+        clearCSV(filename);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String key : timeSettings.keySet()) {
+                String line = key + "," + timeSettings.get(key);
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

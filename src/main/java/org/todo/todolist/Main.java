@@ -23,7 +23,7 @@ public class Main extends Application {
         ToDoList list = new ToDoList();
         MainController mControl = fxmlLoader.getController();
 
-        screenTimeList timeList = new screenTimeList();
+        ScreenTimeList timeList = new ScreenTimeList();
         mControl.setList(list, timeList);
 
         list.taskList = SaveController.loadTasksFromCSV("tasks.csv");
@@ -41,7 +41,11 @@ public class Main extends Application {
         stage.show();
         checkDeadlines(list);
 
+        // Initialize the TimeChecker
+        TimeChecker timeChecker = new TimeChecker();
 
+        // Start the time checking thread
+        checkTimeLimits(timeChecker);
 
         Thread screenTimeThread = new Thread(ScreentimeTracker::track);
         screenTimeThread.setDaemon(true); // Ensures it stops when the app exits
@@ -67,5 +71,24 @@ public class Main extends Application {
         });
         deadlineThread.setDaemon(true);  // This ensures the thread terminates when the app exits
         deadlineThread.start();
+    }
+
+    public static void checkTimeLimits(TimeChecker timeChecker) {
+        Thread timeCheckThread = new Thread(() -> {
+            while (true) {
+                try {
+                    // Sleep for some time before checking again (e.g., every minute)
+                    Thread.sleep(30000); // 300000 milliseconds = 5 minutes
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                // Reload data to ensure it's up-to-date
+                TimeChecker.reloadAllData();
+                // Categorize and notify based on the current time data
+                timeChecker.categorizeAndNotify();
+            }
+        });
+        timeCheckThread.setDaemon(true);  // This ensures the thread terminates when the app exits
+        timeCheckThread.start();
     }
 }
