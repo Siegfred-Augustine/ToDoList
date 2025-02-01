@@ -6,89 +6,75 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import javax.swing.*;
 import java.io.IOException;
+import java.io.File;
 
 
 public class Main extends Application {
-
     @Override
     public void start(Stage stage) throws IOException {
+        launchBackgroundProcess();
+
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MainUI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 760, 538);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-
+        
         ToDoList list = new ToDoList();
         MainController mControl = fxmlLoader.getController();
-
         ScreentimeList timeList = new ScreentimeList();
         mControl.setList(list, timeList);
-
+        
         list.taskList = SaveController.loadTasksFromCSV("tasks.csv");
-
         list.activityTasklist = SaveController.loadActivitiesFromCSV("activities.csv");
-
         list.eventsList = SaveController.loadEventsFromCSV("events.csv");
-
+        
         mControl.taskInitializer(list.taskList);
         mControl.eventInitializer(list.eventsList);
         mControl.activityInitializer(list.activityTasklist);
-
+        
+        // Run deadline checker once at startup
+        list.deadLineChecker();
+        
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-        checkDeadlines(list);
 
-        // Initialize the TimeChecker
-        TimeChecker timeChecker = new TimeChecker();
-
-        // Start the time checking thread
-        checkTimeLimits(timeChecker);
-
-        Thread screenTimeThread = new Thread(ScreentimeTracker::track);
-        screenTimeThread.setDaemon(true); // Ensures it stops when the app exits
-        screenTimeThread.start();
-
+        // Start background processes in a separate process
+        startBackgroundProcesses();
     }
 
     public static void main(String[] args) {
         launch();
     }
 
-    void checkDeadlines(ToDoList list){
-        Thread deadlineThread = new Thread(() -> {
-            while (true) {
-                try {
-                    // Sleep for some time before checking again (e.g., every minute)
-                    Thread.sleep(300000); // 60 seconds
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                list.deadLineChecker();
-            }
-        });
-        deadlineThread.setDaemon(true);  // This ensures the thread terminates when the app exits
-        deadlineThread.start();
+    public static void launchBackgroundProcess() {
+        try {
+            ProcessBuilder builder = new ProcessBuilder("java", "-jar", "tracker.jar");
+            builder.start(); // Starts the process independently
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void checkTimeLimits(TimeChecker timeChecker) {
-        Thread timeCheckThread = new Thread(() -> {
-            while (true) {
-                try {
-                    // Sleep for some time before checking again (e.g., every minute)
-                    Thread.sleep(30000); // 300000 milliseconds = 5 minutes
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // Reload data to ensure it's up-to-date
-                TimeChecker.reloadAllData();
-                // Categorize and notify based on the current time data
-                timeChecker.categorizeAndNotify();
-            }
-        });
-        timeCheckThread.setDaemon(true);  // This ensures the thread terminates when the app exits
-        timeCheckThread.start();
+
+    private void startBackgroundProcesses() {
+        try {
+            String javaHome = System.getProperty("java.home");
+            String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+            String classpath = System.getProperty("java.class.path") + File.pathSeparator + "build/libs/tracker.jar";
+            String className = "org.todo.todolist.BackgroundTracker";
+            
+            ProcessBuilder builder = new ProcessBuilder(
+                javaBin, "-cp", classpath, className
+            );
+            
+            System.out.println("Starting process with command: " + String.join(" ", builder.command()));
+            Process process = builder.start();
+            System.out.println("Process started: " + process.isAlive());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
