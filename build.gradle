@@ -25,8 +25,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'org.todo.todolist' // Your module name
-    mainClass = 'org.todo.todolist.Main' // Your main class
+    mainModule = 'org.todo.todolist'
+    mainClass = 'org.todo.todolist.Main'
 }
 
 javafx {
@@ -35,16 +35,13 @@ javafx {
 }
 
 dependencies {
-
     implementation 'net.java.dev.jna:jna:5.12.1'
     implementation 'net.java.dev.jna:jna-platform:5.12.1'
-    
     implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
         exclude(group: 'org.openjfx')
     }
     implementation 'org.openjfx:javafx-controls:22.0.1'
     implementation 'org.openjfx:javafx-fxml:22.0.1'
-
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
@@ -53,23 +50,45 @@ test {
     useJUnitPlatform()
 }
 
+// Task to build tracker.jar
+tasks.register('trackerJar', Jar) {
+    archiveBaseName = 'tracker'
+    archiveVersion = ''
+    archiveClassifier = ''
+    destinationDirectory = file("$buildDir/libs")
+    
+    manifest {
+        attributes(
+            'Main-Class': 'org.todo.todolist.BackgroundTracker',
+            'Multi-Release': 'true'
+        )
+    }
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    from(sourceSets.main.output)
+}
+
+// Make trackerJar run as part of the build task
+tasks.build.dependsOn trackerJar
+
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-
-    // Add necessary JavaFX modules
     addOptions('--add-modules', 'javafx.controls,javafx.fxml')
-
+    
     launcher {
         name = 'FocusFlow'
     }
-
+    
     jpackage {
         appVersion = '1.0'
-        imageName = 'FocusFlow' // Name of the runtime image
-        installerName = 'FocusFlowSetup' // Name of the installer
-        installerType = 'exe' // Installer type for Windows
+        imageName = 'FocusFlow'
+        installerName = 'FocusFlowSetup'
+        installerType = 'exe'
         description = 'FocusFlow Task Manager'
-        //appIcon = file('src/main/resources/icons/app.ico') // Optional: Add your icon
-        jvmArgs = ['-Xmx512m'] // Optional: JVM arguments
+        jvmArgs = ['-Xmx512m']
     }
 }

@@ -1,5 +1,9 @@
 App Name, Category
+<<<<<<< HEAD
+java.exe,Purposed
+=======
 java.exe,Default (Ignored)
 explorer.exe,Default (Ignored)
 opera.exe,Productive
 idea64.exe,Default (Ignored)
+>>>>>>> 1caa86513591a4aa4d90e370404b8b0cf33fd75c

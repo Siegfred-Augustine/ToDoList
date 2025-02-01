@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ScreenTimeList {
+public class screenTimeList {
 
     private String inputPath = ScreentimeTracker.getFileName();
-    private static String filePath = "processed_data.csv";
+    private static final String filePath = "processed_data.csv";
 
     List<String> productive = new ArrayList<>();
     List<String> leisure = new ArrayList<>();

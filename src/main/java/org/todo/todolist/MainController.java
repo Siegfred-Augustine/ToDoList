@@ -103,7 +103,7 @@ public class MainController implements Initializable {
     private LocalTime maxAllowedTime;
     private LocalTime minRequiredTime;
 
-    ScreenTimeList timeList;
+    screenTimeList timeList;
     ToDoList list;
 
 
@@ -112,7 +112,7 @@ public class MainController implements Initializable {
         sortImportance();
         System.out.println("task sorted");
     }
-    public void setList(ToDoList list, ScreenTimeList timeList){
+    public void setList(ToDoList list, screenTimeList timeList){
         this.list = list;
         this.timeList = timeList;
     }

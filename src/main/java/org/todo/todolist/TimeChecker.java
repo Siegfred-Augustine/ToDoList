@@ -39,7 +39,7 @@ public class TimeChecker {
 
     // Reload the ScreentimeList data (from CSV)
     public static void reloadScreentimeList() {
-        typeData = ScreenTimeList.readCSV();  // Assuming ScreentimeList.readCSV loads type data
+        typeData = screenTimeList.readCSV();  // Assuming ScreentimeList.readCSV loads type data
 
         // Check if the map is null or empty
         if (typeData == null || typeData.isEmpty()) {

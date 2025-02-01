@@ -1,5 +1,8 @@
 App Name,Hours,Minutes,Seconds
-java.exe,0,8,2
-opera.exe,0,0,9
-idea64.exe,0,0,7
-explorer.exe,0,0,2
+
+java.exe,0,14,10
+Code.exe,0,6,14
+explorer.exe,0,1,16
+msedge.exe,0,0,57
+firefox.exe,0,0,43
+SnippingTool.exe,0,0,25
