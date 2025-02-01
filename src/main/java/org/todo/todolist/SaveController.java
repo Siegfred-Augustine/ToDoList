@@ -4,8 +4,13 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+
 public class SaveController {
 
     public static void saveTasksToCSV(List<Tasks> tasks, String filename) {
@@ -110,16 +115,28 @@ public class SaveController {
     public static ArrayList<Tasks> loadTasksFromCSV(String filename) {
         ArrayList<Tasks> tasks = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                
                 String[] taskData = line.split(",");
-
+                
+                // Verify we have all required fields
+                if (taskData.length < 3) {
+                    System.err.println("Skipping invalid line: " + line);
+                    continue;
+                }
+    
                 // Parse task data from CSV line
-                String taskName = taskData[0];
+                String taskName = taskData[0].trim();
                 ToDoList.Hierarchy priority = ToDoList.Hierarchy.LOW;
-                switch(taskData[1]){
+                
+                switch(taskData[1].trim()){
                     case "Low":
                         priority = ToDoList.Hierarchy.LOW;
                         break;
@@ -132,12 +149,19 @@ public class SaveController {
                     case "IMPORTANT":
                         priority = ToDoList.Hierarchy.IMPORTANT;
                         break;
+                    default:
+                        System.err.println("Invalid priority found: " + taskData[1]);
+                        priority = ToDoList.Hierarchy.LOW; // Default to LOW if invalid
                 }
-
-                LocalDate deadline = LocalDate.parse(taskData[2], formatter);
-                // Create Task object (you can modify this based on your Task constructor)
-                Tasks task = new Tasks(taskName, priority, deadline);
-                tasks.add(task);
+    
+                try {
+                    LocalDate deadline = LocalDate.parse(taskData[2].trim(), formatter);
+                    Tasks task = new Tasks(taskName, priority, deadline);
+                    tasks.add(task);
+                } catch (Exception e) {
+                    System.err.println("Error parsing date for line: " + line);
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -218,7 +242,38 @@ public class SaveController {
         }
         return tasks;
     }
+    public static void clearCSV(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            // Opening the file in write mode with an empty content will clear it
+            // No need to write anything to the file; just opening it will erase the content.
+            writer.write("");  // Optional: Clears the file content
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static HashMap<String, String> loadTimeSettings(String filename) {
+        HashMap<String, String> timeSettings = new HashMap<>();
 
+        // Check if the file exists
+        if (!Files.exists(Paths.get(filename))) {
+            System.out.println("File not found: " + filename + ". Returning an empty map.");
+            return timeSettings; // Return an empty map if the file does not exist
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] settingData = line.split(",");
+                if (settingData.length == 2) {
+                    timeSettings.put(settingData[0].trim(), settingData[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return timeSettings;
+    }
     public static void saveTimeSettings(HashMap<String, String> timeSettings, String filename) {
         clearCSV(filename);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
@@ -230,32 +285,6 @@ public class SaveController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-    public static HashMap<String, String> loadTimeSettings(String filename) {
-        HashMap<String, String> timeSettings = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] settingData = line.split(",");
-                if (settingData.length == 2) {
-                    timeSettings.put(settingData[0], settingData[1]);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return timeSettings;
     }
-
-    public static void clearCSV(String filename) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            // Opening the file in write mode with an empty content will clear it
-            // No need to write anything to the file; just opening it will erase the content.
-            writer.write("");  // Optional: Clears the file content
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
 }

@@ -20,11 +20,11 @@ import javax.swing.*;
 import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
-import java.time.LocalTime;
 
 //import static org.todo.todolist.Main.list;
 
@@ -91,11 +91,11 @@ public class MainController implements Initializable {
     @FXML
     private TextField purposedMax;
 
+    @FXML
+    private VBox vboxPS;
+
 
     boolean initialized = false;
-
-    ScreentimeList timeList;
-    ToDoList list;
 
     private boolean sortImportanceToggle = false;
     private LocalTime leisureDefaultTime;
@@ -103,12 +103,16 @@ public class MainController implements Initializable {
     private LocalTime maxAllowedTime;
     private LocalTime minRequiredTime;
 
+    screenTimeList timeList;
+    ToDoList list;
+
+
     @FXML
     void sort(ActionEvent event){
         sortImportance();
         System.out.println("task sorted");
     }
-    public void setList(ToDoList list, ScreentimeList timeList){
+    public void setList(ToDoList list, screenTimeList timeList){
         this.list = list;
         this.timeList = timeList;
     }
@@ -126,25 +130,11 @@ public class MainController implements Initializable {
     }
     @FXML
     public void optionsScene(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("screenTime.fxml")); // Use Main.class
         Scene scene = new Scene(fxmlLoader.load(), 760, 538);
 
         // Get and setup the controller
-        OptionsController controller = fxmlLoader.getController();
-        
-        // Load time settings if they haven't been loaded yet
-        if (leisureDefaultTime == null) {
-            loadTimeSettings();
-        }
-        
-        // Pass the current time settings to the options controller
-        controller.setInitialTimes(
-            leisureDefaultTime,
-            productiveDefaultTime,
-            maxAllowedTime,
-            minRequiredTime
-        );
-        
+        OptionsController controller= fxmlLoader.getController();
         controller.setMainControl(this);
 
         Stage stage = new Stage();
@@ -195,31 +185,6 @@ public class MainController implements Initializable {
             sortByDeadline();
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
     }
-
-    public void updateTimeSettings(LocalTime leisure, LocalTime productive, 
-                                   LocalTime purposedMax, LocalTime purposedMin) {
-        this.leisureDefaultTime = leisure;
-        this.productiveDefaultTime = productive;
-        this.maxAllowedTime = purposedMax;
-        this.minRequiredTime = purposedMin;
-        
-        // Save time settings to a file
-        saveTimeSettings();
-    }
-
-
-    private void saveTimeSettings() {
-        // Create a HashMap to store time settings
-        HashMap<String, String> timeSettings = new HashMap<>();
-        timeSettings.put("leisureTime", leisureDefaultTime.toString());
-        timeSettings.put("productiveTime", productiveDefaultTime.toString());
-        timeSettings.put("maxTime", maxAllowedTime.toString());
-        timeSettings.put("minTime", minRequiredTime.toString());
-        
-        // Add a method to SaveController to save these settings
-        SaveController.saveTimeSettings(timeSettings, "timeSettings.csv");
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -253,7 +218,6 @@ public class MainController implements Initializable {
             if (newTab != null) {
                 newTab.getStyleClass().add("tab-highlighted");
             }
-            loadTimeSettings();
         });
 
         for (Tab tab : mainTabPane.getTabs()) {
@@ -274,7 +238,10 @@ public class MainController implements Initializable {
                 // Ensure updates to UI components happen on the JavaFX Application Thread
                 Platform.runLater(() -> {
                     vboxST.getChildren().clear();
-                    timeList.initialize(vboxST);  // Safely updating UI components from the background thread
+                    vboxPS.getChildren().clear();
+                    vboxST.getChildren().add(new Label("Unprocessed Apps"));
+                    vboxPS.getChildren().add(new Label("Processed Apps"));
+                    timeList.initialize(vboxST, vboxPS);  // Safely updating UI components from the background thread
                 });
             }
         });
@@ -361,11 +328,10 @@ public class MainController implements Initializable {
         SaveController.saveEventsToCSV(list.eventsList, "events.csv");
         SaveController.saveActivityToCSV(list.activityTasklist, "activities.csv");
     }
-
     private void loadTimeSettings() {
         // Add a method to SaveController to load these settings
         HashMap<String, String> timeSettings = SaveController.loadTimeSettings("timeSettings.csv");
-        
+
         if (timeSettings != null) {
             leisureDefaultTime = LocalTime.parse(timeSettings.get("leisureTime"));
             productiveDefaultTime = LocalTime.parse(timeSettings.get("productiveTime"));
@@ -379,6 +345,29 @@ public class MainController implements Initializable {
             minRequiredTime = LocalTime.of(0, 30); // 30 minutes
         }
     }
-}
+    public void updateTimeSettings(LocalTime leisure, LocalTime productive,
+                                   LocalTime purposedMax, LocalTime purposedMin) {
+        this.leisureDefaultTime = leisure;
+        this.productiveDefaultTime = productive;
+        this.maxAllowedTime = purposedMax;
+        this.minRequiredTime = purposedMin;
 
+        // Save time settings to a file
+        saveTimeSettings();
+    }
+
+
+    private void saveTimeSettings() {
+        // Create a HashMap to store time settings
+        HashMap<String, String> timeSettings = new HashMap<>();
+        timeSettings.put("leisureTime", leisureDefaultTime.toString());
+        timeSettings.put("productiveTime", productiveDefaultTime.toString());
+        timeSettings.put("maxTime", maxAllowedTime.toString());
+        timeSettings.put("minTime", minRequiredTime.toString());
+
+        // Add a method to SaveController to save these settings
+        SaveController.saveTimeSettings(timeSettings, "timeSettings.csv");
+    }
+
+}
 

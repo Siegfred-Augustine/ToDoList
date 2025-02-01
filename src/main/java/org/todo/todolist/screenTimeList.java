@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ScreentimeList {
+public class screenTimeList {
 
     private String inputPath = ScreentimeTracker.getFileName();
-    private static String filePath = "processed_data.csv";
+    private static final String filePath = "processed_data.csv";
 
     List<String> productive = new ArrayList<>();
     List<String> leisure = new ArrayList<>();
@@ -43,11 +43,11 @@ public class ScreentimeList {
     ComboBox<String> choices = new ComboBox<>();
     Button addApp = new Button("Add");
 
-    public void initialize(VBox vbox) {
+    public void initialize(VBox vbox, VBox vbox2) {
         Map<String, Long> appScreenTime = AppTime.readCSV(inputPath);
         System.out.println(appScreenTime);
         for (Map.Entry<String, Long> entry : appScreenTime.entrySet()) {
-            if (processed.containsKey(entry.getKey())){
+            if (processed.containsKey(entry.getKey())) {
                 continue;
             }
             HBox box = new HBox();
@@ -55,20 +55,25 @@ public class ScreentimeList {
             ComboBox<String> choices = new ComboBox<>();
             Button addApp = new Button("Add");
             choices.getItems().addAll(appCategory);
+
             appName.setText(entry.getKey());
-            box.setSpacing(20);
+            appName.setStyle("-fx-font-size:10");
+            box.setSpacing(8);
             box.setAlignment(Pos.CENTER);
             box.setMaxHeight(35);
             box.setMinHeight(35);
-            box.setMinWidth(400);
-            box.setMaxWidth(400);
-            box.setPadding(new Insets(10));
+            box.setMinWidth(260);
+            box.setMaxWidth(260);
+            choices.setMaxWidth(80);
+            choices.setStyle("-fx-font-size:10");
+            box.setPadding(new Insets(5));
             box.setStyle("-fx-background-color: #d1c9c5; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-thickness:2");
             addApp.getStyleClass().add("button-hover-effect3");
             choices.setStyle("-fx-background-color:#ffffff");
 
             // Create labels for app name and time spent
             Label timeLabel = new Label(entry.getValue() + " minutes");
+            timeLabel.setStyle("-fx-font-size: 10");
 
             // Create a ComboBox with the given categories
             choices.setValue("Default (Ignored)"); // Set default value
@@ -124,7 +129,48 @@ public class ScreentimeList {
             vbox.setAlignment(Pos.TOP_CENTER);
         }
 
+        Map<String, String> processed = readCSV();
+        for (Map.Entry<String, String> entry : processed.entrySet()) {
+
+            HBox box = new HBox();
+            Label appName = new Label("Sample app");
+            ComboBox<String> choices = new ComboBox<>();
+            choices.getItems().addAll(appCategory);
+
+            appName.setText(entry.getKey());
+            appName.setStyle("-fx-font-size:10");
+            box.setSpacing(8);
+            box.setAlignment(Pos.CENTER);
+            box.setMaxHeight(35);
+            box.setMinHeight(35);
+            box.setMinWidth(260);
+            box.setMaxWidth(260);
+            choices.setMaxWidth(80);
+
+            choices.setStyle("-fx-font-size:10");
+            box.setPadding(new Insets(5));
+            box.setStyle("-fx-background-color: #d1c9c5; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-thickness:2");
+
+            // Create labels for app name and time spent
+            Label timeLabel = new Label(entry.getValue() + " minutes");
+            timeLabel.setStyle("-fx-font-size: 10");
+
+            // Create a ComboBox with the given categories
+            choices.setValue("Default (Ignored)"); // Set default value
+
+            // Create the 'Add' button (action to be added later)
+            // Add all components to the row
+            box.getChildren().addAll(appName, timeLabel);
+
+            // Add the row to the content box
+            vbox2.getChildren().add(box);
+
+            vbox2.setSpacing(10);
+            vbox2.setPadding(new Insets(15));
+            vbox2.setAlignment(Pos.TOP_CENTER);
+        }
     }
+
     public static Map<String, String> readCSV() {
         Map<String, String> appTypeMap = new HashMap<>();
 
@@ -168,7 +214,6 @@ public class ScreentimeList {
                 writer.write(appName + "," + category);
                 writer.newLine();  // Move to the next line
             }
-
             System.out.println("Processed data saved to " + filePath);
         } catch (IOException e) {
             System.err.println("Error writing to CSV: " + e.getMessage());
